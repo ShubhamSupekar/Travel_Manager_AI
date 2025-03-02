@@ -21,6 +21,7 @@ def fetch_flight_data(api_key, dep_iata, arr_iata):
         print(f"Error: {response.status_code}")
         return None
 
+# Add all flight details into list
 def format_flights(flights):
     flight_info = []
     for flight in flights:
@@ -37,6 +38,7 @@ def format_flights(flights):
             print(f"Flight {flight_number} by {airline} from {departure_airport} at {departure_time} to {arrival_airport} at {arrival_time}.")
         except KeyError:
             continue
+
     return flight_info if flight_info else "No valid flights found."
 
 
@@ -54,5 +56,3 @@ if __name__ == "__main__":
 
     # Get the flights information in list
     flights = format_flights(flights)
-
-    
