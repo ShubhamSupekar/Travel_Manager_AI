@@ -46,10 +46,6 @@ def chat_with_model():
                 messages=chat_history,  
                 stream=True,
                 options={
-                    "temperature": 0.5,
-                    "max_tokens": 300,
-                    "top_p": 0.8,
-                    "top_k": 40,
                     "stop": ["User:", "Assistant:"],
                 }
             )
