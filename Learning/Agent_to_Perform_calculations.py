@@ -1,6 +1,5 @@
 from langchain_core.messages import SystemMessage
 from langchain_ollama import ChatOllama
-
 from langgraph.graph import START, StateGraph, MessagesState
 from langgraph.prebuilt import tools_condition, ToolNode
 from IPython.display import Image, display
@@ -62,7 +61,7 @@ builder.add_edge("tools", "assistant")
 # Compile graph
 graph = builder.compile()
 # Show
-display(Image(graph.get_graph(xray=True).draw_mermaid_png()))
+Image(graph.get_graph(xray=True).draw_mermaid_png(output_file_path="Learning/Agent_to_Perform_calculations.png"))
 
 messages = [HumanMessage(content="Add 3 and 4. Multiply the output by 2. Divide the output by 5")]
 messages = graph.invoke({"messages": messages})
