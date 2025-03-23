@@ -5,7 +5,8 @@ from langchain.memory import ConversationBufferMemory
 
 def chat_with_model():
     llm = ChatOllama(
-        model="llama3.2"
+        model="llama3.1:8b",
+        device="cuda"
         )
 
     memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
