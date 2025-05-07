@@ -57,3 +57,45 @@ tagging_chain = prompt | tagging_model | JsonOutputFunctionsParser()
 print(tagging_chain.invoke({"input": page_content}))
 # O/P:
 # {'summary': 'The article discusses the concept of building autonomous agents powered by LLM (large language model) as the core controller. It covers components such as planning, memory, and tool use, along with challenges and references.', 'language': 'English', 'keywords': 'LLM, autonomous agents, planning, memory, tool use, challenges, references'}
+
+class Paper(BaseModel):
+    """Information about papers mentioned."""
+    title: str
+    author: Optional[str]
+
+
+class Info(BaseModel):
+    """Information to extract"""
+    papers: List[Paper]
+
+paper_extraction_function = [
+    convert_pydantic_to_openai_function(Info)
+]
+
+extraction_model = model.bind(
+    functions=paper_extraction_function, 
+    function_call={"name":"Info"}
+)
+
+template = """A article will be passed to you. Extract from it all papers that are mentioned by this article follow by its author. 
+
+Do not extract the name of the article itself. If no papers are mentioned that's fine - you don't need to extract any! Just return an empty list.
+
+Do not make up or guess ANY extra information. Only extract what exactly is in the text."""
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", template),
+    ("human", "{input}")
+])
+
+extraction_chain = prompt | extraction_model | JsonKeyOutputFunctionsParser(key_name="papers")
+
+print()
+print(extraction_chain.invoke({"input": page_content}))
+# O/P:
+# [{'title': 'Chain of thought (CoT; Wei et al. 2022)', 'author': 'Wei et al. 2022'}, {'title': 'Tree of Thoughts (Yao et al. 2023)', 'author': 'Yao et al. 2023'}, {'title': 'LLM+P (Liu et al. 2023)', 'author': 'Liu et al. 2023'}, {'title': 'ReAct (Yao et al. 2023)', 'author': 'Yao et al. 2023'}, {'title': 'Reflexion (Shinn & Labash 2023)', 'author': 'Shinn & Labash 2023'}, {'title': 'Chain of Hindsight (CoH; Liu et al. 2023)', 'author': 'Liu et al. 2023'}, {'title': 'Algorithm Distillation (AD; Laskin et al. 2023)', 'author': 'Laskin et al. 2023'}]
+print()
+print(extraction_chain.invoke({"input": "hi"}))
+# O/P:
+# []
+print()
